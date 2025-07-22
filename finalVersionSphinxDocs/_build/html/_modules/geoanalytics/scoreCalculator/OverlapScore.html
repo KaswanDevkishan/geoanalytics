@@ -70,7 +70,24 @@
            <div itemprop="articleBody">
              
   <h1>Source code for geoanalytics.scoreCalculator.OverlapScore</h1><div class="highlight"><pre>
-<span></span><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span></span><span class="c1"># OverlapScore Class for Measuring Cluster Overlap Between Two Datasets Using KMeans Clustering</span>
+
+<span class="c1"># **Importing and Using the OverlapScore Class in a Python Program**</span>
+<span class="c1">#</span>
+<span class="c1">#             import pandas as pd</span>
+<span class="c1">#</span>
+<span class="c1">#             from geoanalytics.scoreCalculator import OverlapScore</span>
+<span class="c1">#</span>
+<span class="c1">#             train_df = pd.read_csv(&quot;train.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1">#             topk_df = pd.read_csv(&quot;topk.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1">#             overlap = OverlapScore(train_df, topk_df, startBandTrainDF=2, startBandTopkDF=2)</span>
+<span class="c1">#</span>
+<span class="c1">#             score = overlap.run(n_clusters=3)</span>
+<span class="c1">#</span>
+
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">Copyright (C)  2022 Rage Uday Kiran</span>
 
 <span class="s2">     This program is free software: you can redistribute it and/or modify</span>
@@ -91,6 +108,47 @@
 <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
 
 <div class="viewcode-block" id="OverlapScore"><a class="viewcode-back" href="../../../scoreCalculatorOverlapScore.html#geoanalytics.scoreCalculator.OverlapScore.OverlapScore">[docs]</a><span class="k">class</span> <span class="nc">OverlapScore</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **About this module**</span>
+
+<span class="sd">    :**Description**:</span>
+<span class="sd">        OverlapScore quantifies the cluster overlap between two datasets using KMeans clustering.</span>
+<span class="sd">        It helps evaluate how well a top-k retrieved set aligns with the training dataset in the</span>
+<span class="sd">        embedding space, by checking the agreement of cluster assignments.</span>
+
+<span class="sd">    :**Parameters**:</span>
+<span class="sd">        - `TrainDF` (*pd.DataFrame*): The original training dataset.</span>
+<span class="sd">        - `TopkDF` (*pd.DataFrame*): The retrieved top-k dataset.</span>
+<span class="sd">        - `startBandTrainDF` (*int*): Column index from which to start using features in `TrainDF` (default: 2).</span>
+<span class="sd">        - `startBandTopkDF` (*int*): Column index from which to start using features in `TopkDF` (default: 2).</span>
+
+<span class="sd">    :**Attributes**:</span>
+<span class="sd">        - **TrainDF** (*np.ndarray*) -- Sliced feature matrix from the training dataset.</span>
+<span class="sd">        - **TopkDF** (*np.ndarray*) -- Sliced feature matrix from the top-k dataset.</span>
+
+<span class="sd">    **Execution methods**</span>
+
+<span class="sd">    **Calling from a Python program**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">            import pandas as pd</span>
+
+<span class="sd">            from geoanalytics.scoreCalculator import OverlapScore</span>
+
+<span class="sd">            train_df = pd.read_csv(&quot;train.csv&quot;)</span>
+
+<span class="sd">            topk_df = pd.read_csv(&quot;topk.csv&quot;)</span>
+
+<span class="sd">            overlap = OverlapScore(train_df, topk_df, startBandTrainDF=2, startBandTopkDF=2)</span>
+
+<span class="sd">            score = overlap.run(n_clusters=3)</span>
+
+
+<span class="sd">    **Credits**</span>
+
+<span class="sd">    This implementation was created by Raashika and revised by M. Charan Teja under the guidance of Professor Rage Uday Kiran.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TrainDF</span><span class="p">,</span> <span class="n">TopkDF</span><span class="p">,</span> <span class="n">startBandTrainDF</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">startBandTopkDF</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TrainDF</span> <span class="o">=</span> <span class="n">TrainDF</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">startBandTrainDF</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TopkDF</span> <span class="o">=</span> <span class="n">TopkDF</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">startBandTopkDF</span><span class="p">:]</span>
@@ -99,6 +157,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;TrainDF and TopkDF must have the same number of columns after slicing.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OverlapScore.run"><a class="viewcode-back" href="../../../scoreCalculatorOverlapScore.html#geoanalytics.scoreCalculator.OverlapScore.OverlapScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the cluster overlap score using KMeans clustering.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_clusters (int): Number of clusters to use for KMeans (default: 2).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Proportion of top-k samples that belong to the same cluster as the first training sample.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">TrainDF</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TopkDF</span><span class="p">])</span>
         <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>

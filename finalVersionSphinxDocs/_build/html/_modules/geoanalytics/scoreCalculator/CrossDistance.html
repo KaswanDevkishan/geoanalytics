@@ -70,7 +70,24 @@
            <div itemprop="articleBody">
              
   <h1>Source code for geoanalytics.scoreCalculator.CrossDistance</h1><div class="highlight"><pre>
-<span></span><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span></span><span class="c1"># CrossDistance Class for Computing Mean Pairwise Distances Between Two Datasets</span>
+
+<span class="c1"># **Importing and Using the CrossDistance Class in a Python Program**</span>
+<span class="c1">#</span>
+<span class="c1">#             import pandas as pd</span>
+<span class="c1">#</span>
+<span class="c1">#             from geoanalytics.scoreCalculator import CrossDistance</span>
+<span class="c1">#</span>
+<span class="c1">#             topk_df = pd.read_csv(&quot;topk.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1">#             train_df = pd.read_csv(&quot;train.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1">#             cd = CrossDistance(topk_df, train_df, startBandTopkDF=2, startBandTrainDF=2)</span>
+<span class="c1">#</span>
+<span class="c1">#             mean_distance = cd.run(metric=&#39;cosine&#39;)</span>
+<span class="c1">#</span>
+
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">Copyright (C)  2022 Rage Uday Kiran</span>
 
 <span class="s2">     This program is free software: you can redistribute it and/or modify</span>
@@ -91,6 +108,47 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
 
 <div class="viewcode-block" id="CrossDistance"><a class="viewcode-back" href="../../../scoreCalculatorCrossDistance.html#geoanalytics.scoreCalculator.CrossDistance.CrossDistance">[docs]</a><span class="k">class</span> <span class="nc">CrossDistance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **About this module**</span>
+
+<span class="sd">    :**Description**:</span>
+<span class="sd">        CrossDistance computes the average pairwise distances between two datasets using a specified distance metric.</span>
+<span class="sd">        This is useful for evaluating the similarity between two sets of feature vectors, such as in retrieval,</span>
+<span class="sd">        matching, or clustering validation.</span>
+
+<span class="sd">    :**Parameters**:</span>
+<span class="sd">        - `TopkDF` (*pd.DataFrame*): First dataset (e.g., top-k retrieved samples).</span>
+<span class="sd">        - `TrainDF` (*pd.DataFrame*): Second dataset (e.g., original training samples).</span>
+<span class="sd">        - `startBandTopkDF` (*int*): Column index from which to start using features in `TopkDF` (default: 2).</span>
+<span class="sd">        - `startBandTrainDF` (*int*): Column index from which to start using features in `TrainDF` (default: 2).</span>
+
+<span class="sd">    :**Attributes**:</span>
+<span class="sd">        - **TopkDF** (*np.ndarray*) -- Sliced feature matrix from `TopkDF`.</span>
+<span class="sd">        - **TrainDF** (*np.ndarray*) -- Sliced feature matrix from `TrainDF`.</span>
+
+<span class="sd">    **Execution methods**</span>
+
+<span class="sd">    **Calling from a Python program**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">            import pandas as pd</span>
+
+<span class="sd">            from geoanalytics.scoreCalculator import CrossDistance</span>
+
+<span class="sd">            topk_df = pd.read_csv(&quot;topk.csv&quot;)</span>
+
+<span class="sd">            train_df = pd.read_csv(&quot;train.csv&quot;)</span>
+
+<span class="sd">            cd = CrossDistance(topk_df, train_df, startBandTopkDF=2, startBandTrainDF=2)</span>
+
+<span class="sd">            mean_distance = cd.run(metric=&#39;euclidean&#39;)</span>
+
+
+<span class="sd">    **Credits**</span>
+
+<span class="sd">    This implementation was created by Raashika and revised by M. Charan Teja under the guidance of Professor Rage Uday Kiran.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TopkDF</span><span class="p">,</span> <span class="n">TrainDF</span><span class="p">,</span> <span class="n">startBandTopkDF</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">startBandTrainDF</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TopkDF</span> <span class="o">=</span> <span class="n">TopkDF</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">startBandTopkDF</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TrainDF</span> <span class="o">=</span> <span class="n">TrainDF</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">startBandTrainDF</span><span class="p">:]</span>
@@ -99,6 +157,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;TopkDF and TrainDF must have the same number of columns after slicing.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CrossDistance.run"><a class="viewcode-back" href="../../../scoreCalculatorCrossDistance.html#geoanalytics.scoreCalculator.CrossDistance.CrossDistance.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes and returns the mean pairwise distance between the rows of two datasets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric (str): Distance metric to use (default: &#39;euclidean&#39;).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Mean of all computed distances.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TopkDF</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrainDF</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span></div></div>
 </pre></div>

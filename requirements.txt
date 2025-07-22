@@ -18,6 +18,8 @@ hdbscan
 
 rasterio
 
+scipy
+
 sphinx
 sphinx_rtd_theme
 
