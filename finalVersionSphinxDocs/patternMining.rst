@@ -5,7 +5,6 @@ Pattern Mining
    :maxdepth: 1
 
    PMCorrelatedPatternMining
-   PMCoveragePatternMining
    PMFaultTolerantFrequentPatternMining
    PMFrequentPatternMining
    PMGeoreferencedFrequentPatternMining
