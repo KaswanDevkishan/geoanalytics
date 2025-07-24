@@ -54,21 +54,13 @@ of machine learning tasks, such as imputation, image fusion, clustering, classif
 classification, and pattern mining. This library being platform independent can run any operating system. 
 Useful links to utilize the services of this library were provided below:
 
-1. Youtube tutorial
+1. [Tutorials](https://github.com/UdayLab/geoanalytics/blob/main/tests/patternMining/frequentPatternMiningTutorial.ipynb)
 
-2. Tutorials
-   
-3. User manual 
+2. [Datasets](https://github.com/UdayLab/geoanalytics/tree/main/datasets)  
 
-4. Coders manual  
+3. [Discussions](https://github.com/UdayLab/geoanalytics/discussions)
 
-5. Code documentation 
-
-6. Datasets  
-
-7. [Discussions](https://github.com/UdayLab/geoanalytics/discussions)
-
-8. [Report issues](https://github.com/UdayLab/geoanalytics/issues)
+4. [Report issues](https://github.com/UdayLab/geoanalytics/issues)
 
 ***
 # Flow Chart of Developing Algorithms in geoAnalytics
